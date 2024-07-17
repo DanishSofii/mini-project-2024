@@ -1,0 +1,3 @@
+Run main.py for without esrgan
+
+Run new.py for with esrgan

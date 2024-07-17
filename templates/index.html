@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Ocular Disease Prediction</title>
+    <style>
+        body {
+            background: linear-gradient(135deg, #6a82fb, #fc5c7d);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            font-family: sans-serif;
+        }
+        .container {
+            display: flex;
+            width: 80%;
+            height: 80vh;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.5);
+        }
+        .form-container, .result-container {
+            flex: 1;
+            /* background: rgba(0, 0, 0, 0.8); */
+            background-image: -webkit-linear-gradient(47.5deg, #484242 50%, #3b6f71 50%);
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            transition: background-color 0.3s, transform 0.2s;
+        }
+        .form-container:hover, .result-container:hover {
+            background-image: -webkit-linear-gradient(47.5deg,  #3b6f71 50%, #484242 50%);
+            
+        }
+        .loading {
+            display: none;
+            font-size: 24px;
+            color: #fff;
+            font-weight: bold;
+        }
+        img {
+            height: 250px;
+            width: 250px;
+            margin: 20px 0;
+            border-radius: 8px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+        }
+        label {
+            margin-bottom: 10px;
+            font-weight: bold;
+            color: #fff;
+        }
+        input[type="file"] {
+            display: none;
+        }
+        .file-upload-label, button {
+            padding: 12px 20px;
+            background-color: #5cb85c;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            margin-bottom: 20px;
+            transition: background-color 0.3s, transform 0.2s;
+        }
+        .file-upload-label:hover, button:hover {
+            background-color: #4cae4c;
+            transform: scale(1.05);
+        }
+        .heading {
+            color: aliceblue;
+        }
+        #resultText * {
+            margin: 10px;
+            color: #fff;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="form-container">
+            <h1 class="heading">Ocular Disease Prediction</h1>
+            <form action="/" method="post" enctype="multipart/form-data" onsubmit="showLoader()">
+                <label for="file" class="file-upload-label">Upload an image</label>
+                <input type="file" name="file" id="file" required class="file-input">
+                <button type="submit">Predict</button>
+            </form>
+        </div>
+        <div class="result-container" id="resultContainer">
+            <div class="loading" id="loading">Processing...</div>
+            <img id="resultImage" src="{{ img_url }}" alt="Uploaded Image" style="display: {% if img_url %}block{% else %}none{% endif %};">
+            <div id="resultText" style="display: {% if predictions %}block{% else %}none{% endif %};">
+                <h2>Prediction Result</h2>
+                <div>The predicted class/disease is:</div>
+                <div id="predictions">
+                    {% if predictions %}
+                        {% for pred in predictions %}
+                            <div><strong>{{ pred[0] }}</strong>: {{ pred[1] }}%</div>
+                        {% endfor %}
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+        function showLoader() {
+            document.getElementById('loading').style.display = 'block';
+            document.getElementById('resultImage').style.display = 'none';
+            document.getElementById('resultText').style.display = 'none';
+        }
+
+        // Activate result container background change after processing
+        document.addEventListener("DOMContentLoaded", function() {
+            {% if predictions %}
+                document.getElementById('resultContainer').classList.add('active');
+            {% endif %}
+        });
+    </script>
+</body>
+</html>
