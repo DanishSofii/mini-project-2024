@@ -1,18 +1,23 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <title>Ocular Disease Prediction</title>
     <style>
         body {
-            background: linear-gradient(135deg, #6a82fb, #fc5c7d);
+            /* background: linear-gradient(135deg, #6a82fb, #fc5c7d); */
+            background: linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab);
+            background-size: 400% 400%;
+            animation: gradient 15s ease infinite;
+            height: 100vh;
             display: flex;
             justify-content: center;
             align-items: center;
-            height: 100vh;
             margin: 0;
             font-family: sans-serif;
         }
+
         .container {
             display: flex;
             width: 80%;
@@ -21,10 +26,11 @@
             overflow: hidden;
             box-shadow: 0 8px 30px rgba(0, 0, 0, 0.5);
         }
-        .form-container, .result-container {
+
+        .form-container,
+        .result-container {
             flex: 1;
-            /* background: rgba(0, 0, 0, 0.8); */
-            background-image: -webkit-linear-gradient(47.5deg, #484242 50%, #3b6f71 50%);
+            /* background-image: -webkit-linear-gradient(47.5deg, #484242 50%, #3b6f71 50%); */
             padding: 20px;
             display: flex;
             flex-direction: column;
@@ -32,9 +38,19 @@
             align-items: center;
             transition: background-color 0.3s, transform 0.2s;
         }
-        .form-container:hover, .result-container:hover {
-            background-image: -webkit-linear-gradient(47.5deg,  #3b6f71 50%, #484242 50%);
-            
+        .form-container{
+            background-image: -webkit-linear-gradient(47.5deg, #484242 50%, #3b6f71 50%);
+        }
+        .result-container{
+            background-image: -webkit-linear-gradient(132.5deg, #484242 50%, #3b6f71 50%);
+        }
+
+        .form-container:hover,
+        .result-container:hover {
+            background-image: -webkit-linear-gradient(47.5deg, #3b6f71 50%, #484242 50%);
+        }
+        .form-container:hover{
+            background-image: -webkit-linear-gradient(132.5deg, #3b6f71 50%, #484242 50%);
         }
         .loading {
             display: none;
@@ -42,6 +58,7 @@
             color: #fff;
             font-weight: bold;
         }
+
         img {
             height: 250px;
             width: 250px;
@@ -49,15 +66,19 @@
             border-radius: 8px;
             box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
         }
+
         label {
             margin-bottom: 10px;
             font-weight: bold;
             color: #fff;
         }
+
         input[type="file"] {
             display: none;
         }
-        .file-upload-label, button {
+
+        .file-upload-label,
+        button {
             padding: 12px 20px;
             background-color: #5cb85c;
             color: white;
@@ -68,40 +89,60 @@
             margin-bottom: 20px;
             transition: background-color 0.3s, transform 0.2s;
         }
-        .file-upload-label:hover, button:hover {
+
+        .file-upload-label:hover,
+        button:hover {
             background-color: #4cae4c;
             transform: scale(1.05);
         }
+
         .heading {
             color: aliceblue;
         }
+
         #resultText * {
             margin: 10px;
             color: #fff;
         }
+
+        @keyframes gradient {
+            0% {
+                background-position: 0% 50%;
+            }
+
+            50% {
+                background-position: 100% 50%;
+            }
+
+            100% {
+                background-position: 0% 50%;
+            }
+        }
     </style>
 </head>
+
 <body>
     <div class="container">
         <div class="form-container">
             <h1 class="heading">Ocular Disease Prediction</h1>
             <form action="/" method="post" enctype="multipart/form-data" onsubmit="showLoader()">
-                <label for="file" class="file-upload-label">Upload an image</label>
-                <input type="file" name="file" id="file" required class="file-input">
+                <label for="file" class="file-upload-label" id="fileLabel">Upload an image</label>
+                <input type="file" name="file" id="file" required class="file-input" onchange="updateLabel()">
                 <button type="submit">Predict</button>
             </form>
         </div>
         <div class="result-container" id="resultContainer">
             <div class="loading" id="loading">Processing...</div>
-            <img id="resultImage" src="{{ img_url }}" alt="Uploaded Image" style="display: {% if img_url %}block{% else %}none{% endif %};">
+            <img id="resultImage" src="{{ img_url }}" alt="Uploaded Image"
+                style="display: {% if img_url %}block{% else %}none{% endif %};">
             <div id="resultText" style="display: {% if predictions %}block{% else %}none{% endif %};">
                 <h2>Prediction Result</h2>
                 <div>The predicted class/disease is:</div>
                 <div id="predictions">
                     {% if predictions %}
-                        {% for pred in predictions %}
-                            <div><strong>{{ pred[0] }}</strong>: {{ pred[1] }}%</div>
-                        {% endfor %}
+                    {% for pred in predictions %}
+                    <div><strong>{{ pred[0] }}</strong>: {{ pred[1] }}%</div>
+                    {% endfor %}
                     {% endif %}
                 </div>
             </div>
@@ -114,12 +155,22 @@
             document.getElementById('resultText').style.display = 'none';
         }
 
-        // Activate result container background change after processing
-        document.addEventListener("DOMContentLoaded", function() {
+        function updateLabel() {
+            var input = document.getElementById('file');
+            var label = document.getElementById('fileLabel');
+            if (input.files && input.files.length > 0) {
+                label.textContent = input.files[0].name;
+            } else {
+                label.textContent = 'Upload an image';
+            }
+        }
+
+        document.addEventListener("DOMContentLoaded", function () {
             {% if predictions %}
-                document.getElementById('resultContainer').classList.add('active');
+            document.getElementById('resultContainer').classList.add('active');
             {% endif %}
         });
     </script>
 </body>
+
 </html>

@@ -10,14 +10,14 @@ import RRDBNet_arch as arch
 
 app = Flask(__name__)
 
-# Load classification model
-classification_model_path = 'D:/minip/minip/minip/notebooks/ocular_disease_vgg16_2.h5'
+
+classification_model_path = 'D:/minip/notebooks/ocular_disease_vgg16_2.h5'
 classification_model = tf.keras.models.load_model(classification_model_path)
 class_labels = ['cataract', 'diabetic_retinopathy', 'glaucoma', 'normal']
 
-# Load ESRGAN model
-esrgan_model_path = 'D:/minip/minip/minip/notebooks/esrgan/RRDB_ESRGAN_x4.pth'
-device = torch.device('cpu')  # Use CPU for ESRGAN
+
+esrgan_model_path = 'D:/minip/notebooks/esrgan/RRDB_ESRGAN_x4.pth'
+device = torch.device('cpu') 
 esrgan_model = arch.RRDBNet(3, 3, 64, 23, gc=32)
 esrgan_model.load_state_dict(torch.load(esrgan_model_path), strict=True)
 esrgan_model.eval()
@@ -27,7 +27,7 @@ def preprocess_image(img_path):
     img = image.load_img(img_path, target_size=(224, 224))
     img_array = image.img_to_array(img)
     img_array = np.expand_dims(img_array, axis=0)
-    img_array /= 255.0  # Rescale the image
+    img_array /= 255.0 
     return img_array
 
 def super_resolve_image(img):
@@ -49,14 +49,13 @@ def upload_file():
             img = Image.open(BytesIO(file.read()))
             enhanced_img = super_resolve_image(img)
             
-            # Save enhanced image
-            img_dir = 'D:/minip/minip/minip/notebooks/static'
+           
+            img_dir = 'D:/minip/notebooks/static'
             if not os.path.exists(img_dir):
                 os.makedirs(img_dir)
             img_path = os.path.join(img_dir, 'enhanced_image.png')
             enhanced_img.save(img_path)
 
-            # Preprocess and predict
             preprocessed_img = preprocess_image(img_path)
             prediction = classification_model.predict(preprocessed_img)[0]
             predicted_classes = list(zip(class_labels, prediction))
